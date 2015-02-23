@@ -6,3 +6,5 @@ dist
 app/.idea/*
 bower_components
 .DS_Store
+.idea
+

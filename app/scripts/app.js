@@ -80,7 +80,7 @@ angular.module('myApp.directives', [])
           scopeUrls.push('https://www.googleapis.com/' + scopes[i]);
         }
 
-        var callbackId = "_googleSigninCallback",
+        var callbackId = '_googleSigninCallback',
           directiveScope = scope;
         window[callbackId] = function() {
           var oauth = arguments[0];
@@ -125,11 +125,21 @@ angular.module('myApp.services', [])
   .factory('UserService', function($q, $http, AWSService, StripeService) {
     var service = {
       _user: null,
-      UsersTable: "Users",
-      UserItemsTable: "UsersItems",
-      ChargeTable: "UserCharges",
+      UsersTable: 'Users',
+      UserItemsTable: 'UsersItems',
+      ChargeTable: 'UserCharges',
       Bucket: 'ng-newsletter-example-users',
       setCurrentUser: function(u) {
+        if (u && !u.error) {
+          AWSService.setToken(u.id_token);
+          return service.currentUser();
+        } else {
+          var d = $q.defer();
+          d.reject(u.error);
+          return d.promise;
+        }
+      },
+      signOutCurrentUser: function(u) {
         if (u && !u.error) {
           AWSService.setToken(u.id_token);
           return service.currentUser();
@@ -196,9 +206,9 @@ angular.module('myApp.services', [])
             table.query({
               TableName: service.UserItemsTable,
               KeyConditions: {
-                "User email": {
-                  "ComparisonOperator": "EQ",
-                  "AttributeValueList": [
+                'User email': {
+                  'ComparisonOperator': 'EQ',
+                  'AttributeValueList': [
                     {S: user.email}
                   ]
                 }
@@ -422,7 +432,7 @@ angular.module('myApp.services', [])
             !obj.hasOwnProperty('exp_month') ||
             !obj.hasOwnProperty('exp_year')
           ) {
-            d.reject("Bad input", obj);
+            d.reject('Bad input', obj);
           } else {
             Stripe.card.createToken(obj,
               function(status, resp) {

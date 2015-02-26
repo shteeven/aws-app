@@ -9,7 +9,7 @@
  */
 
 angular.module('myApp')
-  .controller('MainCtrl', function($scope, AWSService, UserService, StripeService) {
+  .controller('MainCtrl', function($scope, AWSService, UserService, StripeService, $http) {
 
     $scope.clientId = '120364084226-72omk2fl5mu05vdb765heq23r5lt9dh1';
 
@@ -55,31 +55,9 @@ angular.module('myApp')
     };
 
     function disconnectUser(access_token) {
-      var revokeUrl = 'https://accounts.google.com/o/oauth2/revoke?token=' +
-        access_token;
-      // Perform an asynchronous GET request.
-      $.ajax({
-        type: 'GET',
-        url: revokeUrl,
-        async: false,
-        contentType: 'application/json',
-        dataType: 'jsonp',
-        success: function(nullResponse) {
-
-          $scope.user = undefined;
-          console.log($scope.user);
-
-          // Do something now that user is disconnected
-          // The response is always undefined.
-        },
-        error: function(e) {
-          // Handle the error
-          // console.log(e);
-          // You could point users to manually disconnect if unsuccessful
-          // https://plus.google.com/apps
-        }
-      });
+      var revokeUrl = 'https://accounts.google.com/o/oauth2/revoke?token=' + access_token + '&callback=JSON_CALLBACK';
+      $http.jsonp(revokeUrl)
+        .success( function(nullResponse) {$scope.user = undefined;})
+        .error(function(err) {console.log(err);});
     }
-
-
   });

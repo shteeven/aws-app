@@ -139,16 +139,6 @@ angular.module('myApp.services', [])
           return d.promise;
         }
       },
-      signOutCurrentUser: function(u) {
-        if (u && !u.error) {
-          AWSService.setToken(u.id_token);
-          return service.currentUser();
-        } else {
-          var d = $q.defer();
-          d.reject(u.error);
-          return d.promise;
-        }
-      },
       currentUser: function() {
         var d = $q.defer();
         if (service._user) {
